@@ -9,11 +9,13 @@ import { theme } from "../../theme";
 interface EventLocationScreenProps {
   onBack: () => void;
   onContinue: (location: string, addressDetails: string) => void;
+  onClose: () => void;
 }
 
 export const EventLocationScreen: React.FC<EventLocationScreenProps> = ({
   onBack,
   onContinue,
+  onClose,
 }) => {
   const [location, setLocation] = useState("");
   const [addressDetails, setAddressDetails] = useState("");
@@ -23,7 +25,7 @@ export const EventLocationScreen: React.FC<EventLocationScreenProps> = ({
         <View style={styles.progressHeader}>
           <ChevronLeft size={32} strokeWidth={1.5} onPress={onBack} />
           <SegmentedProgress currentStep={3} totalSteps={5} />
-          <X />
+          <X onPress={onClose} />
         </View>
 
         <View style={styles.formContent}>

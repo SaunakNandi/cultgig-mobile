@@ -170,7 +170,11 @@ export const HomeScreen = () => {
           <Text
             variant="headline"
             color="textSecondary"
-            style={{ paddingHorizontal: 20, marginVertical: 36 }}
+            style={{
+              marginHorizontal: 20,
+              marginVertical: 36,
+              paddingRight: 20,
+            }}
           >
             India’s most trusted quick artist app
           </Text>

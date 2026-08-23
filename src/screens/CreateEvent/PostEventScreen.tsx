@@ -27,6 +27,7 @@ interface PostEventScreenProps {
   budget: string;
   onBack: () => void;
   onContinue: () => void;
+  onClose: () => void;
 }
 
 export const PostEventScreen: React.FC<PostEventScreenProps> = ({
@@ -39,13 +40,14 @@ export const PostEventScreen: React.FC<PostEventScreenProps> = ({
   budget,
   onBack,
   onContinue,
+  onClose,
 }) => (
   <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
     <ScrollView contentContainerStyle={styles.content}>
       <View style={styles.progressHeader}>
         <ChevronLeft size={32} strokeWidth={1.5} onPress={onBack} />
         <SegmentedProgress currentStep={5} totalSteps={5} />
-        <X />
+        <X onPress={onClose} />
       </View>
       <Text variant="h1" style={styles.heading}>
         Alright, ready to get offers from top artists

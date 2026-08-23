@@ -10,11 +10,13 @@ import { theme } from "../../theme";
 interface CreateEventScreenProps {
   onBack: () => void;
   onContinue: (title: string, description: string) => void;
+  onClose: () => void;
 }
 
 export const CreateEventScreen: React.FC<CreateEventScreenProps> = ({
   onBack,
   onContinue,
+  onClose,
 }) => {
   const [eventTitle, setEventTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -28,7 +30,7 @@ export const CreateEventScreen: React.FC<CreateEventScreenProps> = ({
         <View style={styles.progressHeader}>
           <ChevronLeft size={32} strokeWidth={1.5} onPress={onBack} />
           <SegmentedProgress currentStep={1} totalSteps={5} />
-          <X />
+          <X onPress={onClose} />
         </View>
         <View style={styles.formContent}>
           <Text variant="h1" style={styles.titleLabel}>

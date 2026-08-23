@@ -13,11 +13,13 @@ import { theme } from "../../theme";
 interface TimeDateScreenProps {
   onBack: () => void;
   onContinue: (date: string, time: string) => void;
+  onClose: () => void;
 }
 
 export const TimeDateScreen: React.FC<TimeDateScreenProps> = ({
   onBack,
   onContinue,
+  onClose,
 }) => {
   const [date, setDate] = useState<Date | null>(null);
   const [time, setTime] = useState<Date | null>(null);
@@ -49,7 +51,7 @@ export const TimeDateScreen: React.FC<TimeDateScreenProps> = ({
         <View style={styles.progressHeader}>
           <ChevronLeft size={32} strokeWidth={1.5} onPress={onBack} />
           <SegmentedProgress currentStep={2} totalSteps={5} />
-          <X />
+          <X onPress={onClose} />
         </View>
 
         <View style={styles.formContent}>

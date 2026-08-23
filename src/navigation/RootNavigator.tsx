@@ -394,6 +394,7 @@ const CreateEventRoute = () => {
   return (
     <CreateEventScreen
       onBack={() => navigation.goBack()}
+      onClose={() => navigation.navigate("MainTabs")}
       onContinue={(title, description) =>
         navigation.navigate("TimeDate", { title, description })
       }
@@ -408,6 +409,7 @@ const TimeDateRoute = () => {
   return (
     <TimeDateScreen
       onBack={() => navigation.goBack()}
+      onClose={() => navigation.navigate("MainTabs")}
       onContinue={(date, time) =>
         navigation.navigate("EventLocation", {
           ...route.params,
@@ -426,6 +428,7 @@ const EventLocationRoute = () => {
   return (
     <EventLocationScreen
       onBack={() => navigation.goBack()}
+      onClose={() => navigation.navigate("MainTabs")}
       onContinue={(location, addressDetails) =>
         navigation.navigate("EventBudget", {
           ...route.params,
@@ -444,6 +447,7 @@ const EventBudgetRoute = () => {
   return (
     <EventBudgetScreen
       onBack={() => navigation.goBack()}
+      onClose={() => navigation.navigate("MainTabs")}
       onContinue={(budget) =>
         navigation.navigate("PostEvent", { ...route.params, budget })
       }
@@ -459,6 +463,7 @@ const PostEventRoute = () => {
     <PostEventScreen
       {...route.params}
       onBack={() => navigation.goBack()}
+      onClose={() => navigation.navigate("MainTabs")}
       onContinue={() => navigation.navigate("MainTabs")}
     />
   );

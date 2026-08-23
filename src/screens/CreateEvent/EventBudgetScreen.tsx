@@ -9,11 +9,13 @@ import { theme } from "../../theme";
 interface EventBudgetScreenProps {
   onBack: () => void;
   onContinue: (budget: string) => void;
+  onClose: () => void;
 }
 
 export const EventBudgetScreen: React.FC<EventBudgetScreenProps> = ({
   onBack,
   onContinue,
+  onClose,
 }) => {
   const [budget, setBudget] = useState("");
 
@@ -23,7 +25,7 @@ export const EventBudgetScreen: React.FC<EventBudgetScreenProps> = ({
         <View style={styles.progressHeader}>
           <ChevronLeft size={32} strokeWidth={1.5} onPress={onBack} />
           <SegmentedProgress currentStep={4} totalSteps={5} />
-          <X />
+          <X onPress={onClose} />
         </View>
 
         <View style={styles.formContent}>
