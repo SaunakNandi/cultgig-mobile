@@ -7,7 +7,14 @@ import {
   Image,
   ScrollView,
 } from "react-native";
-import { Bell, FileText, FileCheck, Star, Eye } from "lucide-react-native";
+import {
+  Bell,
+  FileText,
+  FileCheck,
+  Star,
+  Eye,
+  Search,
+} from "lucide-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -19,6 +26,7 @@ import EventCard from "@/components/templates/EventCard/EventCard";
 import { Input } from "../../components/atoms/Input/";
 import { Button } from "../../components";
 import { RootStackParamList } from "../../navigation/types";
+import { HowCultgigWorks } from "../../components/molecules/HowCultgigWorks/HowCultgigWorks";
 /**
  * SCREEN: Home
  * -------------------------------------------------------
@@ -98,7 +106,7 @@ export const HomeScreen = () => {
   // home screen for client
   if (role === "client") {
     return (
-      <SafeAreaView edges={["top"]}>
+      <SafeAreaView edges={["top", "bottom"]}>
         {/* Top Header */}
         <View style={styles.topHeader}>
           <TouchableOpacity style={styles.bellButton}>
@@ -113,15 +121,13 @@ export const HomeScreen = () => {
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* post event card  */}
           <View style={styles.scrollContainer}>
-            <Input
-              placeholder="Search for artists, skills, generes.."
-              style={{
-                paddingVertical: 16.5,
-                paddingHorizontal: 12,
-                marginBottom: 20,
-                borderRadius: 12,
-              }}
-            />
+            <View style={styles.searchInputWrapper}>
+              <Search size={20} color={theme.colors.textSecondary} />
+              <Input
+                placeholder="Search for artists, skills, generes.."
+                style={styles.searchInput}
+              />
+            </View>
             <View style={styles.clientHero}>
               <Text variant="h3" color="background">
                 Need an artist for your event?
@@ -157,6 +163,17 @@ export const HomeScreen = () => {
           </View>
 
           {/* how cultgig work */}
+          <View style={styles.scrollContainer}>
+            <HowCultgigWorks />
+          </View>
+
+          <Text
+            variant="headline"
+            color="textSecondary"
+            style={{ paddingHorizontal: 20, marginVertical: 36 }}
+          >
+            India’s most trusted quick artist app
+          </Text>
         </ScrollView>
       </SafeAreaView>
     );
@@ -227,6 +244,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 16,
   },
+  searchInputWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 20,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.surface,
+  },
+  searchInput: {
+    flex: 1,
+    borderWidth: 0,
+    paddingVertical: 16.5,
+    paddingHorizontal: 0,
+  },
   postEventButton: {
     width: 135,
     height: 44,
@@ -234,6 +268,7 @@ const styles = StyleSheet.create({
   },
   postEventLabel: {
     fontSize: 14,
+    color: theme.colors.primary,
   },
   grid: {
     flexDirection: "row",
