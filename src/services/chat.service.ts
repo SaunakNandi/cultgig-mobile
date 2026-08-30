@@ -6,14 +6,19 @@ import {
   Query,
   storage,
 } from "@/services/appwrite";
-import { ConversationDocument, MessageDocument } from "@/types/chat-type";
+import {
+  ConversationDocument,
+  MessageDocument,
+  SendMessagePayload,
+  UserProfileDocument,
+} from "@/types/chat-type";
 
-export function useChat() {
+export function chatUtilityFunc() {
   async function getConversation(
     userId: string,
   ): Promise<ConversationDocument[]> {
     const queries = [
-      Query.equal("participants", userId),
+      Query.contains("participant_ids", userId),
       Query.orderDesc("last_message_at"),
       Query.limit(50),
     ];
@@ -23,13 +28,75 @@ export function useChat() {
       APPWRITE_CONFIG.CONVERSATIONS_COLLECTION_ID,
       queries,
     );
-    return response.documents;
+    const conversation = response.documents;
+    const userIdSet = new Set<string>();
+    conversation.forEach((conv) =>
+      conv.participant_ids.forEach((id) => userIdSet.add(id)),
+    );
+
+    const userRecord = await databases.listDocuments<UserProfileDocument>(
+      APPWRITE_CONFIG.DATABASE_ID,
+      "user",
+      [Query.equal("$id", Array.from(userIdSet))],
+    );
+
+    const userDocs = userRecord.documents;
+    const userMap = new Map<string, UserProfileDocument>();
+    userDocs.forEach((user) => userMap.set(user.$id, user));
+    return conversation.map((item) => ({
+      ...item,
+      participants: item.participant_ids
+        .map((id) => userMap.get(id))
+        .filter(Boolean),
+    })) as ConversationDocument[];
   }
 
-  async function createNewConversation(
-    targetUserId: string,
+  async function isChatExistingOrNew(targetUser: string, currentUser: string) {
+    const userConversation =
+      await databases.listDocuments<ConversationDocument>(
+        APPWRITE_CONFIG.DATABASE_ID,
+        APPWRITE_CONFIG.CONVERSATIONS_COLLECTION_ID,
+        [Query.contains("participant_ids", currentUser)],
+      );
+    console.log("userConversation.documents ", userConversation.documents);
+    const doesChatExists = userConversation.documents.find((conv) => {
+      if (conv?.participants) return false;
+      const participantsIds = conv.participant_ids || [];
+      return participantsIds.includes(targetUser);
+    });
+    if (doesChatExists) return doesChatExists;
+    const newChat = await databases.createDocument<ConversationDocument>(
+      APPWRITE_CONFIG.DATABASE_ID,
+      APPWRITE_CONFIG.CONVERSATIONS_COLLECTION_ID,
+      ID.unique(),
+      {
+        participants: [currentUser, targetUser],
+        participant_ids: [currentUser, targetUser],
+        last_message: null,
+        last_message_at: new Date().toISOString(),
+        unread_by: [],
+        cleared_at: null,
+      },
+    );
+    const populatedChat = await databases.getDocument<ConversationDocument>(
+      APPWRITE_CONFIG.DATABASE_ID,
+      APPWRITE_CONFIG.CONVERSATIONS_COLLECTION_ID,
+      newChat.$id,
+    );
+    console.log("populatedChat ", populatedChat);
+    return populatedChat;
+  }
+
+  function getChatPartner(
+    conversation: ConversationDocument,
     currentUserId: string,
-  ) {}
+  ): UserProfileDocument | undefined {
+    if (!Array.isArray(conversation.participants)) return;
+    return conversation.participants.find(
+      (item): item is UserProfileDocument =>
+        typeof item !== "string" && item.$id !== currentUserId,
+    );
+  }
 
   async function getMessages(
     conversationId: string,
@@ -52,7 +119,7 @@ export function useChat() {
     return response.documents;
   }
 
-  async function sendMessage(payload: any) {
+  async function sendMessage(payload: SendMessagePayload) {
     const now = new Date().toISOString();
     const message = await databases.createDocument<MessageDocument>(
       APPWRITE_CONFIG.DATABASE_ID,
@@ -76,7 +143,7 @@ export function useChat() {
     await databases.updateDocument(
       APPWRITE_CONFIG.DATABASE_ID,
       APPWRITE_CONFIG.CONVERSATIONS_COLLECTION_ID,
-      payload.conversation_id,
+      payload.conversationId,
       {
         last_message: payload.text || `[${payload?.type?.toUpperCase()}]`,
         last_message_at: now,
@@ -138,4 +205,16 @@ export function useChat() {
       if (payload.conversation_id === conversationId) callback(response);
     });
   }
+  return {
+    markAsRead,
+    subscribeToMessages,
+    getChatPartner,
+    getConversation,
+    getFileDownloadUrl,
+    getFilePreviewUrl,
+    getMessages,
+    uploadFile,
+    sendMessage,
+    isChatExistingOrNew,
+  };
 }

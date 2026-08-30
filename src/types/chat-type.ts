@@ -14,19 +14,33 @@ export interface ConversationDocument extends Models.Document {
   unread_by?: string[] | null;
   cleared_at?: string | null;
   participants: UserProfileDocument[] | string[];
+  participant_ids: string[];
 }
 
 export interface MessageDocument extends Models.Document {
   conversation_id: string;
   sender_id: string;
   receiver_id: string;
-  text?: string;
+  text?: string | null;
   type: MessageType;
-  file_id?: string;
-  file_name?: string;
-  file_size?: number;
-  mime_type?: string;
-  link_metadata?: string;
-  deleted_for?: string[];
+  file_id?: string | null;
+  file_name?: string | null;
+  file_size?: number | null;
+  mime_type?: string | null;
+  link_metadata?: Record<string, any> | string | null;
+  deleted_for?: string[] | null;
   is_deleted_everyone: boolean;
+}
+
+export interface SendMessagePayload {
+  conversationId: string;
+  senderId: string;
+  receiverId: string;
+  text?: string;
+  type?: MessageType;
+  fileId?: string | null;
+  fileName?: string | null;
+  fileSize?: number | null;
+  mimeType?: string | null;
+  linkMetadata?: Record<string, any> | string | null;
 }
