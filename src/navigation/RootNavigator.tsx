@@ -489,7 +489,7 @@ const ApplyEventRoute = () => {
     <ApplyOnEvent
       eventId={route.params?.eventId}
       onBack={() => navigation.goBack()}
-      onContinue={(budget) => navigation.navigate("NegotiatePrice", { budget })}
+      onClose={() => navigation.navigate("MainTabs")}
     />
   );
 };
@@ -502,6 +502,7 @@ const NegotiatePriceRoute = () => {
     <NegotiatePriceScreen
       budget={route.params.budget}
       onBack={() => navigation.goBack()}
+      onClose={() => navigation.navigate("MainTabs")}
       onContinue={(proposedPrice: number) =>
         navigation.navigate("Proposal", {
           budget: route.params.budget,

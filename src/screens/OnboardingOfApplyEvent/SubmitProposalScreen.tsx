@@ -1,9 +1,12 @@
 import React from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronLeft } from "lucide-react-native";
+import { ChevronLeft, X } from "lucide-react-native";
 import { Button, SegmentedProgress, Text } from "../../components";
 import { theme } from "../../theme";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../navigation/types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface SubmitProposalScreenProps {
   budget: number;
@@ -20,12 +23,17 @@ export const SubmitProposalScreen: React.FC<SubmitProposalScreenProps> = ({
   onBack,
   onContinue,
 }) => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
       <ScrollView contentContainerStyle={styles.contentContainer}>
         <View style={{ flexDirection: "row", gap: 81 }}>
           <ChevronLeft size={32} strokeWidth={1.5} onPress={onBack} />
           <SegmentedProgress currentStep={4} totalSteps={4} />
+          <Pressable onPress={() => navigation.navigate("MainTabs")}>
+            <X />
+          </Pressable>
         </View>
 
         <Text variant="h1" style={styles.title}>
@@ -34,30 +42,53 @@ export const SubmitProposalScreen: React.FC<SubmitProposalScreenProps> = ({
 
         <View style={styles.card1}>
           {/* item 1 */}
-          <View style={styles.carditem1}>
-            <Text variant="bodySmallBold">Business Budget</Text>
-            <Text variant="bodySmallBold">₹{budget}</Text>
-          </View>
-          {/* item 2 */}
-          <View style={styles.carditem}>
-            <Text variant="bodySmallBold">Your proposed price</Text>
-            <Text variant="bodySmallBold">₹{proposedPrice}</Text>
-          </View>
-          {/* difference */}
-          <View style={styles.difference}>
+          <View
+            style={[
+              styles.carditem1,
+              proposedPrice === budget && styles.singlePrice,
+            ]}
+          >
             <Text
               variant="bodySmallBold"
-              style={{ color: theme.colors.primary }}
+              style={proposedPrice === budget && styles.singlePriceLabel}
             >
-              Difference
+              Business Budget
             </Text>
             <Text
               variant="bodySmallBold"
-              style={{ color: theme.colors.primary }}
+              style={[
+                styles.singlePriceText,
+                proposedPrice === budget && styles.singlePriceTextLarge,
+              ]}
             >
-              +₹{proposedPrice - budget}
+              ₹{budget}
             </Text>
           </View>
+          {/* item 2 & difference - only show if proposedPrice !== budget */}
+          {proposedPrice !== budget && (
+            <>
+              {/* item 2 */}
+              <View style={styles.carditem}>
+                <Text variant="bodySmallBold">Your proposed price</Text>
+                <Text variant="bodySmallBold">₹{proposedPrice}</Text>
+              </View>
+              {/* difference */}
+              <View style={styles.difference}>
+                <Text
+                  variant="bodySmallBold"
+                  style={{ color: theme.colors.primary }}
+                >
+                  Difference
+                </Text>
+                <Text
+                  variant="bodySmallBold"
+                  style={{ color: theme.colors.primary }}
+                >
+                  +₹{proposedPrice - budget}
+                </Text>
+              </View>
+            </>
+          )}
         </View>
 
         <Text variant="titleMd" style={styles.proposal}>
@@ -120,6 +151,23 @@ const styles = StyleSheet.create({
     marginRight: theme.spacing.md,
     marginLeft: theme.spacing.md,
     paddingBottom: theme.spacing.md,
+  },
+  singlePrice: {
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: theme.spacing.sm,
+    minHeight: 80,
+  },
+  singlePriceLabel: {
+    color: theme.colors.textSecondary,
+  },
+  singlePriceText: {},
+  singlePriceTextLarge: {
+    color: theme.colors.primary,
+    fontSize: theme.fontSize["3xl"],
+    fontWeight: theme.fontWeight.black,
+    lineHeight: theme.lineHeight["3xl"],
   },
   difference: {
     flexDirection: "row",

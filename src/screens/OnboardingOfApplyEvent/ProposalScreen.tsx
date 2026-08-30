@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, TextInput } from "react-native";
+import { View, StyleSheet, ScrollView, TextInput, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronLeft, Lightbulb } from "lucide-react-native";
+import { ChevronLeft, Lightbulb, X } from "lucide-react-native";
 import { Button, SegmentedProgress, Text } from "../../components";
 import { theme } from "../../theme";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../navigation/types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface ProposalScreenProps {
   budget: number;
@@ -20,6 +23,7 @@ export const ProposalScreen: React.FC<ProposalScreenProps> = ({
 }) => {
   const [proposalDescription, setProposalDescription] = useState("");
   const isValidProposal = proposalDescription.trim().length > 0;
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   return (
     <SafeAreaView style={styles.container} edges={["top", "bottom"]}>
@@ -27,6 +31,9 @@ export const ProposalScreen: React.FC<ProposalScreenProps> = ({
         <View style={{ flexDirection: "row", gap: 81 }}>
           <ChevronLeft size={32} strokeWidth={1.5} onPress={onBack} />
           <SegmentedProgress currentStep={3} totalSteps={4} />
+          <Pressable onPress={() => navigation.navigate("MainTabs")}>
+            <X />
+          </Pressable>
         </View>
 
         <Text variant="h1" style={styles.title}>
@@ -55,14 +62,13 @@ export const ProposalScreen: React.FC<ProposalScreenProps> = ({
       </ScrollView>
 
       <View style={styles.footer}>
-        {isValidProposal && onContinue && (
-          <Button
-            label="Continue"
-            onPress={() => onContinue(proposalDescription.trim())}
-            fullWidth
-            style={styles.continueButton}
-          />
-        )}
+        <Button
+          label="Continue"
+          onPress={() => onContinue?.(proposalDescription.trim())}
+          fullWidth
+          disabled={!isValidProposal}
+          style={styles.continueButton}
+        />
       </View>
     </SafeAreaView>
   );

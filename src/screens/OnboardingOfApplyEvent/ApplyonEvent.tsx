@@ -4,25 +4,30 @@ import { Text } from "../../components/atoms/Text";
 import { Button } from "../../components/atoms/Button";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { theme } from "../../theme";
-import { ChevronLeft, ChevronRight, Lightbulb } from "lucide-react-native";
+import { ChevronLeft, ChevronRight, Lightbulb, X } from "lucide-react-native";
 import { usePopularEventDetail } from "../../hooks/useArtworks";
 import { SegmentedProgress } from "../../components/molecules/SegmentedProgress/SegmentedProgress";
+import { useNavigation } from "@react-navigation/native";
+import { RootStackParamList } from "../../navigation/types";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 interface ApplyOnEventProps {
   eventId?: number | undefined;
   onBack?: () => void;
-  onContinue?: (budget: number) => void;
+  onClose?: () => void;
 }
 
 export const ApplyOnEvent: React.FC<ApplyOnEventProps> = ({
   eventId,
   onBack,
-  onContinue,
+  onClose,
 }) => {
   const [selectedOption, setSelectedOption] = useState<
     "business" | "proposed" | null
   >(null);
   const { data: event } = usePopularEventDetail(eventId ?? 0);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   if (!event) {
     return (
@@ -41,9 +46,12 @@ export const ApplyOnEvent: React.FC<ApplyOnEventProps> = ({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.contentContainer}
       >
-        <View style={{ flexDirection: "row", gap: 81 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
           <ChevronLeft size={32} strokeWidth={1.5} onPress={onBack} />
           <SegmentedProgress currentStep={1} totalSteps={4} />
+          <Pressable onPress={onClose}>
+            <X />
+          </Pressable>
         </View>
         <Text variant="h1" style={styles.heading}>
           How would you like to apply for this gig ?
@@ -100,7 +108,13 @@ export const ApplyOnEvent: React.FC<ApplyOnEventProps> = ({
       <View style={styles.footer}>
         <Button
           label="Continue"
-          onPress={() => onContinue?.(selectedBudget)}
+          onPress={() => {
+            if (selectedOption === "business") {
+              navigation.navigate("Proposal", { budget: selectedBudget, proposedPrice: selectedBudget });
+            } else if (selectedOption === "proposed") {
+              navigation.navigate("NegotiatePrice", { budget: selectedBudget });
+            }
+          }}
           fullWidth
           disabled={!selectedOption}
           style={styles.continueButton}

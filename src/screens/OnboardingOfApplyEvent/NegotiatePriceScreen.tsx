@@ -1,19 +1,21 @@
 import React, { useMemo, useState } from "react";
-import { View, StyleSheet, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ChevronLeft } from "lucide-react-native";
+import { ChevronLeft, X } from "lucide-react-native";
 import { Button, Input, SegmentedProgress, Text } from "../../components";
 import { theme } from "../../theme";
 
 interface NegotiatePriceScreenProps {
   budget: number;
   onBack?: () => void;
+  onClose?: () => void;
   onContinue?: (proposedPrice: number) => void;
 }
 
 export const NegotiatePriceScreen: React.FC<NegotiatePriceScreenProps> = ({
   budget,
   onBack,
+  onClose,
   onContinue,
 }) => {
   const [proposedPrice, setProposedPrice] = useState("");
@@ -33,6 +35,11 @@ export const NegotiatePriceScreen: React.FC<NegotiatePriceScreenProps> = ({
         <View style={{ flexDirection: "row", gap: 81 }}>
           <ChevronLeft size={32} strokeWidth={1.5} onPress={onBack} />
           <SegmentedProgress currentStep={2} totalSteps={4} />
+          {onClose && (
+            <Pressable onPress={onClose}>
+              <X />
+            </Pressable>
+          )}
         </View>
 
         <Text variant="h1" style={styles.title}>
@@ -68,14 +75,13 @@ export const NegotiatePriceScreen: React.FC<NegotiatePriceScreenProps> = ({
       </ScrollView>
 
       <View style={styles.footer}>
-        {isValidPrice && onContinue && (
-          <Button
-            label="Continue"
-            onPress={() => onContinue(Number(proposedPrice))}
-            fullWidth
-            style={styles.continueButton}
-          />
-        )}
+        <Button
+          label="Continue"
+          onPress={() => onContinue?.(Number(proposedPrice))}
+          fullWidth
+          disabled={!isValidPrice}
+          style={styles.continueButton}
+        />
       </View>
     </SafeAreaView>
   );
