@@ -59,7 +59,6 @@ export function chatUtilityFunc() {
         [Query.contains("participant_ids", currentUser)],
       );
     const doesChatExists = userConversation.documents.find((conv) => {
-      if (conv?.participants) return false;
       const participantsIds = conv.participant_ids || [];
       return participantsIds.includes(targetUser);
     });
@@ -103,8 +102,7 @@ export function chatUtilityFunc() {
     cursor?: string,
   ): Promise<MessageDocument[]> {
     const queries = [
-      Query.contains("conversation_id", conversationId),
-      Query.orderDesc("last_message_at"),
+      Query.equal("conversation_id", conversationId),
       Query.orderDesc("$createdAt"),
       Query.limit(limit),
     ];

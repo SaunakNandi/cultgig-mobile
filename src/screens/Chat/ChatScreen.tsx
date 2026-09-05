@@ -86,52 +86,50 @@ export default function ChatScreen() {
             )}
           </Pressable>
         </View>
-        {isConversationLoading ? (
-          <View className="flex-1 items-center h-full justify-center">
-            <ActivityIndicator size="large" color={ACTIVE_COLOR} />
-          </View>
-        ) : isErrorInConverstation ? (
-          <View className="flex-1 items-center justify-center p-6">
-            <Text className="text-red-500 font-medium text-center">
-              Failed to load conversations ⚠️
-            </Text>
-            <Pressable
-              onPress={() => refetch()}
-              className="mt-3 px-4 py-2 bg-neutral-100 rounded-lg"
-            >
-              <Text className="text-neutral-800 font-semibold">
-                Tap to retry
-              </Text>
-            </Pressable>
-          </View>
-        ) : (
-          <FlatList
-            data={displayedChat}
-            keyExtractor={(item) => item.$id}
-            contentContainerStyle={{ flexGrow: 1 }}
-            onRefresh={refetch}
-            refreshing={isConversationLoading || isConversationFetching}
-            renderItem={({ item }) => (
-              <ConversationItem
-                conversation={item}
-                myUserId={userId}
-                chatParticipant={getChatPartner(item, userId)}
-              />
-            )}
-            ListEmptyComponent={
-              <InboxEmptyState
-                image={EmptyChatImage}
-                description={
-                  activeTab === "all"
-                    ? "Your next conversation is just a connection"
-                    : "You have caught up with all your messages!"
-                }
-                heading={"Your inbox is quiet"}
-              />
-            }
-          />
-        )}
       </View>
+      {isConversationLoading ? (
+        <View className="flex-1 items-center h-full justify-center">
+          <ActivityIndicator size="large" color={ACTIVE_COLOR} />
+        </View>
+      ) : isErrorInConverstation ? (
+        <View className="flex-1 items-center justify-center p-6">
+          <Text className="text-red-500 font-medium text-center">
+            Failed to load conversations ⚠️
+          </Text>
+          <Pressable
+            onPress={() => refetch()}
+            className="mt-3 px-4 py-2 bg-neutral-100 rounded-lg"
+          >
+            <Text className="text-neutral-800 font-semibold">Tap to retry</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <FlatList
+          data={displayedChat}
+          keyExtractor={(item) => item.$id}
+          contentContainerStyle={{ flexGrow: 1 }}
+          onRefresh={refetch}
+          refreshing={isConversationLoading || isConversationFetching}
+          renderItem={({ item }) => (
+            <ConversationItem
+              conversation={item}
+              myUserId={userId}
+              chatParticipant={getChatPartner(item, userId)}
+            />
+          )}
+          ListEmptyComponent={
+            <InboxEmptyState
+              image={EmptyChatImage}
+              description={
+                activeTab === "all"
+                  ? "Your next conversation is just a connection"
+                  : "You have caught up with all your messages!"
+              }
+              heading={"Your inbox is quiet"}
+            />
+          }
+        />
+      )}
     </SafeAreaView>
   );
 }

@@ -4,6 +4,7 @@
  * type checking on navigation.navigate('ScreenName', params).
  */
 
+import { ChatRoomInterface, UserProfileDocument } from "@/types/chat-type";
 import type { User } from "../services/artworkService";
 
 export type RootStackParamList = {
@@ -68,6 +69,7 @@ export type RootStackParamList = {
     proposalDescription: string;
   };
   Login: undefined;
+  ChatRoom: ChatRoomInterface;
 };
 
 export type MainTabParamList = {

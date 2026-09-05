@@ -44,3 +44,9 @@ export interface SendMessagePayload {
   mimeType?: string | null;
   linkMetadata?: Record<string, any> | string | null;
 }
+
+export interface ChatRoomInterface {
+  conversationId: string;
+  chatParticipant: UserProfileDocument | undefined;
+  myUserId: string;
+}

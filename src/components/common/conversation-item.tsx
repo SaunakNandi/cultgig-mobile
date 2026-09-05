@@ -1,7 +1,9 @@
 import { ConversationDocument, UserProfileDocument } from "@/types/chat-type";
 import { formatDateTimeStamp } from "@/utils/formate-date";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "@/navigation/types";
 import { View, Text, Image, Pressable } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ConversationItemType {
   conversation: ConversationDocument;
@@ -14,9 +16,21 @@ export const ConversationItem = ({
   chatParticipant,
 }: ConversationItemType) => {
   const isUnread = conversation.unread_by?.includes(myUserId);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  function navigateToInbox() {
+    navigation.navigate("ChatRoom", {
+      conversationId: conversation.$id,
+      chatParticipant,
+      myUserId,
+    });
+  }
   return (
     chatParticipant && (
-      <Pressable className="flex-row items-center px-6 py-4 border-b border-neutral-100 active:bg-neutral-50">
+      <Pressable
+        className="flex-row items-center px-6 py-4 border-b border-neutral-100 active:bg-neutral-50"
+        onPress={navigateToInbox}
+      >
         {/* Avatar Container */}
         <View className="w-12 h-12 rounded-full bg-neutral-200 items-center justify-center mr-4 overflow-hidden">
           {chatParticipant.avatar_url ? (
