@@ -2,8 +2,13 @@ import { chatUtilityFunc } from "@/services/chat.service";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Variable } from "lucide-react-native";
 
-const { getConversation, isChatExistingOrNew, getMessages, sendMessage } =
-  chatUtilityFunc();
+const {
+  getConversation,
+  isChatExistingOrNew,
+  getMessages,
+  sendMessage,
+  getUserProfile,
+} = chatUtilityFunc();
 
 export function useGetConvesation(userId: string) {
   return useQuery({
@@ -15,13 +20,22 @@ export function useGetConvesation(userId: string) {
   });
 }
 
-export function createChatIfNot(targetUserId: string, myUserId: string) {
-  return useQuery({
-    queryKey: ["messages", targetUserId, myUserId],
-    queryFn: () => isChatExistingOrNew(targetUserId, myUserId),
-    enabled: !!targetUserId && !!myUserId,
-    refetchOnMount: "always",
-    refetchOnWindowFocus: false,
+export function createChatIfNot() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      targetUserId,
+      myUserId,
+    }: {
+      targetUserId: string;
+      myUserId: string;
+    }) => isChatExistingOrNew(targetUserId, myUserId),
+    onSuccess: (_, populatedChat) => {
+      queryClient.invalidateQueries({
+        queryKey: ["get-conversation"],
+      });
+      return populatedChat;
+    },
   });
 }
 
@@ -31,6 +45,7 @@ export function useMessages(conversationId: string) {
     queryFn: () => getMessages(conversationId),
     enabled: !!conversationId,
     refetchOnWindowFocus: true,
+    refetchOnMount: "always",
   });
 }
 
@@ -46,5 +61,15 @@ export function useSendMessages() {
         queryKey: ["get-conversation"],
       });
     },
+  });
+}
+
+export function useGetMyProfiileDetails(userId: string) {
+  return useQuery({
+    queryKey: ["get-my-profile", userId],
+    enabled: !!userId,
+    queryFn: () => getUserProfile(userId),
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
   });
 }

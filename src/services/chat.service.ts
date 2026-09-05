@@ -36,7 +36,7 @@ export function chatUtilityFunc() {
 
     const userRecord = await databases.listDocuments<UserProfileDocument>(
       APPWRITE_CONFIG.DATABASE_ID,
-      "user",
+      APPWRITE_CONFIG.USERS_COLLECTION_ID,
       [Query.equal("$id", Array.from(userIdSet))],
     );
 
@@ -58,7 +58,6 @@ export function chatUtilityFunc() {
         APPWRITE_CONFIG.CONVERSATIONS_COLLECTION_ID,
         [Query.contains("participant_ids", currentUser)],
       );
-    console.log("userConversation.documents ", userConversation.documents);
     const doesChatExists = userConversation.documents.find((conv) => {
       if (conv?.participants) return false;
       const participantsIds = conv.participant_ids || [];
@@ -205,6 +204,15 @@ export function chatUtilityFunc() {
       if (payload.conversation_id === conversationId) callback(response);
     });
   }
+
+  async function getUserProfile(userId: string) {
+    return await databases.getDocument<UserProfileDocument>(
+      APPWRITE_CONFIG.DATABASE_ID,
+      APPWRITE_CONFIG.USERS_COLLECTION_ID,
+      userId,
+    );
+  }
+
   return {
     markAsRead,
     subscribeToMessages,
@@ -216,5 +224,6 @@ export function chatUtilityFunc() {
     uploadFile,
     sendMessage,
     isChatExistingOrNew,
+    getUserProfile,
   };
 }
