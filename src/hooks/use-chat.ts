@@ -53,6 +53,7 @@ export function useMessages(conversationId: string) {
   });
 }
 
+// includes optimistic updates
 export function useSendMessages() {
   const queryClient = useQueryClient();
   return useMutation({
