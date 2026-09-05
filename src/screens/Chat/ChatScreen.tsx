@@ -3,10 +3,11 @@ import InboxEmptyState from "@/components/common/inbox-empty-state";
 import { Text } from "@/components/ui/text";
 import { useGetConvesation } from "@/hooks/use-chat";
 import { chatUtilityFunc } from "@/services/chat.service";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyChatImage from "../../../assets/images/chat-message.png";
+import { useFocusEffect } from "@react-navigation/native";
 
 // current testing
 const userId = "6a8f327800175a53acc0";
@@ -20,6 +21,11 @@ export default function ChatScreen() {
     isError: isErrorInConverstation,
     refetch,
   } = useGetConvesation("6a8f327800175a53acc0");
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
   const { getChatPartner } = chatUtilityFunc();
   const displayedChat = useMemo(() => {
     if (isConversationFetching || isConversationLoading) return;

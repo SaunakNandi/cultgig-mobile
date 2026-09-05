@@ -1,4 +1,5 @@
 import { ConversationDocument, UserProfileDocument } from "@/types/chat-type";
+import { formatDateTimeStamp } from "@/utils/formate-date";
 import { View, Text, Image, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -33,13 +34,15 @@ export const ConversationItem = ({
 
         {/* Details Container */}
         <View className="flex-1">
-          <View className="flex-row justify-between items-center mb-1">
+          <View className="flex-row justify-between items-start mb-1">
             <Text className="text-base font-semibold text-neutral-800">
               {chatParticipant.name}
             </Text>
-            {/* {conversation?.last_message_at && (
-              <Text className="text-sm font-medium">{conversation.last_message_at}</Text>
-            )} */}
+            {conversation?.last_message_at && (
+              <Text className="text-sm font-medium">
+                {formatDateTimeStamp(conversation.last_message_at)}
+              </Text>
+            )}
           </View>
 
           {conversation?.last_message &&
@@ -51,7 +54,9 @@ export const ConversationItem = ({
                     ? "font-semibold text-neutral-800 truncate"
                     : "text-neutral-500 font-normal"
                 }`}
-              ></Text>
+              >
+                {conversation.last_message}
+              </Text>
             )}
         </View>
 
