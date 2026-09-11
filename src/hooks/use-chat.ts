@@ -1,3 +1,4 @@
+import { DummyUtility } from "@/dummy/dummy-utility";
 import { chatUtilityFunc } from "@/services/chat.service";
 import {
   MessageDocument,
@@ -13,7 +14,7 @@ const {
   sendMessage,
   getUserProfile,
   uploadFile,
-} = chatUtilityFunc();
+} = DummyUtility(); // chatUtilityFunc()
 
 export function useGetConvesation(userId: string) {
   return useQuery({

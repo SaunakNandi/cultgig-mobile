@@ -553,7 +553,7 @@ export const RootNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Welcome"
+        initialRouteName="MainTabs"
         screenOptions={{
           headerShown: false,
           headerStyle: { backgroundColor: theme.colors.surface },
